@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Header from './components/Header';
 import Form from './components/Form';
 import TaskList from './components/TaskList';
 import './App.css';
@@ -30,16 +31,49 @@ function App() {
     ], []);
   }
 
+  // タスクの編集
+  const editTask = (e, index) => {
+    e.preventDefault();
+
+    const tmpTasks = tasks.map((task, idx) => {
+      if(idx === index) {
+        task.editMode = true;
+      }
+      return task;
+    });
+
+    setTasks(tmpTasks);
+  }
+
+  // タスクの更新
+  const handleUpdateTask = (e, index) => {
+    e.preventDefault();
+    const { taskName } = e.target.elements;
+    if(taskName.value === '') return false;
+
+    const tmpTasks = [...tasks];
+    
+    tmpTasks[index] = {
+      name: taskName.value,
+      date: dateFormat(new Date()),
+      editMode: false,
+    }
+
+    setTasks(tmpTasks);
+    saveToSessionStorage(tmpTasks);
+
+  }
+
   // タスクの追加
   const createTask = (e) => {
     e.preventDefault();
     const { taskName } = e.target.elements;
-
     if(taskName.value === '') return false;
 
     const tmpTasks = [{
       name: taskName.value,
       date: dateFormat(new Date()),
+      editMode: false,
     }, ...tasks];
 
     setTasks(tmpTasks);
@@ -97,10 +131,13 @@ function App() {
   }
 
   return (
-    <>
-      <Form createTask={createTask} />
-      <TaskList tasks={tasks} deleteTask={deleteTask} moveTask={moveTask} />
-    </>
+    <section className="section">
+      <div className="container">
+        <Header />
+        <Form createTask={createTask} />
+        <TaskList tasks={tasks} editTask={editTask} handleUpdateTask={handleUpdateTask} deleteTask={deleteTask} moveTask={moveTask} />
+      </div>
+    </section>
   );
 }
 

@@ -1,15 +1,37 @@
-const Task = ({task, index, deleteTask, moveTask}) => {
+const Task = ({task, index, editTask, deleteTask, moveTask, handleUpdateTask}) => {
   return (
-    <div className={`task task-${index}`}>
+    <div className={`box task task-${index}`}>
       <div className="title">
-        {task.name}
+        {
+          (()=> {
+            if(task.editMode) {
+              return (
+                <form className="field has-addons" onSubmit={e => handleUpdateTask(e, index)}>
+                  <div className="control is-expanded">
+                    <input className="input" type="text" name="taskName" placeholder="Input TaskName..." defaultValue={task.name} />
+                  </div>
+                  <div className="control">
+                    <button type="submit" className="button is-info">
+                      更新
+                    </button>
+                  </div>
+                </form>
+              );
+            } else {
+              return (task.name);
+            }
+          })()
+        }
       </div>
       <div className="regDate">
         {task.date}
       </div>
-      <button className="upBtn" onClick={e => moveTask(e, index, -1)}>上へ</button>
-      <button className="downBtn" onClick={e => moveTask(e, index, 1)}>下へ</button>
-      <button className="delBtn" onClick={e => deleteTask(e, index)}>
+      <button className="button upBtn" onClick={e => moveTask(e, index, -1)}>▲</button>
+      <button className="button downBtn" onClick={e => moveTask(e, index, 1)}>▼</button>
+      <button className="button editBtn" onClick={e => editTask(e, index)}>
+        編集
+      </button>
+      <button className="button delBtn" onClick={e => deleteTask(e, index)}>
         削除
       </button>
     </div>
