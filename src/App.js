@@ -9,7 +9,7 @@ function App() {
 
   // 初回起動時にセッションストレージからタスクを読み込む
   useEffect(() => {
-    const loadTasks = loadFromSessionStorage();
+    const loadTasks = loadFromLocalStorage();
     setTasks(loadTasks);
   }, [setTasks]);
 
@@ -60,7 +60,7 @@ function App() {
     }
 
     setTasks(tmpTasks);
-    saveToSessionStorage(tmpTasks);
+    saveToLocalStorage(tmpTasks);
 
   }
 
@@ -78,7 +78,7 @@ function App() {
 
     setTasks(tmpTasks);
 
-    saveToSessionStorage(tmpTasks);
+    saveToLocalStorage(tmpTasks);
 
     taskName.value = '';
     taskName.focus();
@@ -93,7 +93,7 @@ function App() {
     tmpTasks.splice(index, 1);
     setTasks(tmpTasks);
 
-    saveToSessionStorage(tmpTasks);
+    saveToLocalStorage(tmpTasks);
   }
 
   // タスクを移動 mode:-1なら上へ、1なら下へ移動
@@ -103,26 +103,25 @@ function App() {
     const replacedTasks = replaceArrayElements(tasks, index+(mode), index);
     setTasks(replacedTasks);
 
-    saveToSessionStorage(replacedTasks);
+    saveToLocalStorage(replacedTasks);
   }
 
   // セッションストレージにタスクを保存
-  const saveToSessionStorage = (tasks) => {
+  const saveToLocalStorage = (tasks) => {
     try {
-      console.log(tasks);
       const serializedTasks = JSON.stringify(tasks);
-      sessionStorage.setItem('tasks', serializedTasks);
+      localStorage.setItem('tasks', serializedTasks);
     } catch(e) {
       console.log(e);
     }
   }
 
   // セッションストレージからタスクを読み込む
-  const loadFromSessionStorage = () => {
+  const loadFromLocalStorage = () => {
     try {
-      const serializedTasks = sessionStorage.getItem('tasks');
+      const serializedTasks = localStorage.getItem('tasks');
       if(!serializedTasks) {
-        return false;
+        return [];
       }
       return JSON.parse(serializedTasks);
     } catch(e) {
